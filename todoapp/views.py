@@ -1,26 +1,37 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.http import HttpResponse
 from django.utils import timezone
 from todoapp.models import todo
 from django.http import HttpResponseRedirect
+from .forms import *
+
 
 def index(request):
-    todo_items=todo.objects.all().order_by("-added_date")
-    return render(request, 'todoapp/index.html',{"todo_items":todo_items})
+    todo_items = todo.objects.all().order_by("-added_date")
+    form = todoappform()
+    if request.method == 'POST':
+        form = todoappform(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect('/')
+    context = {"todo_items": todo_items, 'form': form}
+    return render(request, 'todoapp/index.html', context)
 
 
-# .create helps in updating th database
-# here a dictionary is created with content as key , and the dictionary is request.POST
-def add_todo(request):
-    current_date=timezone.now()
-    content=request.POST["content"]
-    created_obj=todo.objects.create(added_date=current_date,text=content) 
-    return HttpResponseRedirect('/')
+def updateTask(request, pk):
+    task = todo.objects.get(id=pk)
+    form = todoappform(instance=task)
+    if request.method=="POST":
+        form = todoappform(request.POST,instance=task)
+        if form.is_valid():
+            form.save()
+        return redirect('/')
 
+    context = {'form': form}
+    return render(request, 'todoapp/update.html',context)
 
-
-def delete_todo(request,todo_id):
+def deleteTask(request,todo_id):
     todo.objects.get(id=todo_id).delete()
-    return HttpResponseRedirect('/')
+    return redirect('/')

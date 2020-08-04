@@ -1,38 +1,61 @@
-{% extends 'base.html' %}
-
-
-{% block content %}
-
-   <div class="row mt-4">
-       <div class="col">
-<h2>Add Item</h2>
-<form action="add_todo/" method="post"  class="form-inline">
-    {% csrf_token %}
-      <input type="text" name="content" class="form-control mb-2 mr-sm-2" placeholder="type here..." autocomplete=off>
-      <button type="submit" class="btn btn-primary mb-2">Submit</button>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+      crossorigin="anonymous"
+    />
+    
+    <title>Document</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">To Do APP</a>
+    </nav>
+    <div class="container">
+       
+      <div class="row mt-4">
+        <div class="col">
+          <h2>Add Items</h2>
+       
+      <form method="POST" action="/">
+        {% csrf_token %}
+        <input type="text" name="text" maxlength="200" autocomplete="off" />
+        <input type="submit" name="Todo App" />
       </form>
+      </div>
     </div>
-   </div> 
-   <div class="row mt-4">
-       <div class="col">
-           <ul class="list-group">
-            {% for todo_item in todo_items %}
-               <li class="list-group-item">{{todo_item.text}}
-
-
-                   <div class="float-right">
-                 <form action="delete_todo/{{todo_item.id}}/" action="post" >   
-                    {% csrf_token %}   
-                <button type="submit" class="btn btn-sm btn-danger ">Delete</button>
-            </form>
-            </div>   
-            </li>
-                
-                
-
-
-            {% endfor %}
-           </ul>
-       </div>
-   </div>
-{% endblock content %}
+      <div class="row-mt-4">
+        <div class="col">
+          <ul class="list-group">
+      {% for todo_item in todo_items %}
+      <li class="list-group-item">
+        {% if todo_item.complete == True %}
+        
+       <strike>{{todo_item}}</strike>
+        {% else %}
+        <span>{{todo_item}}</span>
+        {% endif %}
+      
+      <div class="float-right">
+        <button class="btn btn btn-warning"><a href={% url 'update_task' todo_item.id %} style="text-decoration:none; color:black;">Update</a></button>
+        </div>
+        <div class="float-right">
+        <form action="deletetask/{{todo_item.id}}/" method="POST">
+          {% csrf_token %}
+        <button class="btn btn btn-danger">Delete</button>
+        </form>
+        </div>
+      </li>
+      {% endfor %}
+      </ul>
+      </div>
+      </div>
+ 
+     
+    </div>
+  </body>
+</html>
